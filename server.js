@@ -1,7 +1,13 @@
 const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 8080;
-const wss = new WebSocket.Server({ port: PORT });
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+const express = require('express');
+const http = require('http');
+const app = express();
+app.use(express.static(__dirname));
 
 let clients = [];
 
@@ -45,7 +51,9 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log("Server attivo su porta 8080");
+server.listen(PORT, () => {
+  console.log("Server attivo su porta", PORT);
+});
 
 // ----------------------
 // CONTROLLO ROUND

@@ -267,8 +267,7 @@
 
       let data = [];
 
-      const socket = new WebSocket("ws://192.168.1.16:8080"); // SOSTITUISCI con il tuo IP
-
+        const socket = new WebSocket("wss://ritual-demo-production.up.railway.app");
       socket.onopen = () => {
         setPermissionStatus("connesso al server");
       };
