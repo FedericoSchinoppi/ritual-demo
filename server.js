@@ -1,13 +1,43 @@
-const WebSocket = require('ws');
-
-const PORT = process.env.PORT || 8080;
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-
 const express = require('express');
 const http = require('http');
+const WebSocket = require('ws');
+
 const app = express();
+
 app.use(express.static(__dirname));
+
+const PORT = process.env.PORT || 8080;
+
+const server = http.createServer(app);
+
+const wss = new WebSocket.Server({ server });
+
+console.log("WebSocket server pronto");
+
+wss.on('connection', (ws) => {
+
+  console.log("Client connesso");
+
+  ws.on('message', (message) => {
+    console.log("Messaggio:", message.toString());
+
+    // rimanda il messaggio a tutti
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message.toString());
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    console.log("Client disconnesso");
+  });
+
+});
+
+server.listen(PORT, () => {
+  console.log("Server attivo sulla porta", PORT);
+});
 
 let clients = [];
 
