@@ -14,31 +14,6 @@ const wss = new WebSocket.Server({ server });
 
 console.log("WebSocket server pronto");
 
-wss.on('connection', (ws) => {
-
-  console.log("Client connesso");
-
-  ws.on('message', (message) => {
-    console.log("Messaggio:", message.toString());
-
-    // rimanda il messaggio a tutti
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message.toString());
-      }
-    });
-  });
-
-  ws.on('close', () => {
-    console.log("Client disconnesso");
-  });
-
-});
-
-server.listen(PORT, () => {
-  console.log("Server attivo sulla porta", PORT);
-});
-
 let clients = [];
 
 // dati raccolti per round
@@ -51,6 +26,10 @@ let isRecording = false;
 
 wss.on('connection', (ws) => {
   console.log("Client connesso");
+
+  ws.send(JSON.stringify({
+    type: "connected"
+  }));
 
   clients.push(ws);
 
