@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=PP+Rader:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px 18px;
+      background: black;
+      color: white;
+      font-family: 'PP Rader', Arial, Helvetica, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-size: 36px;
+      line-height: 1.1;
+    }
+
+    h2 {
+      min-height: 1.2em;
+    }
+
+    button {
+      border: none;
+      border-radius: 34px;
+      font-family: 'PP Rader', Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .team-button {
+      margin: 10px;
+      padding: 20px 30px;
+      font-size: 30px;
+    }
+
+    .hydra {
+      background: #00FFE5;
+      color: #000;
+    }
+
+    .echo {
+      background: #B156FF;
+      color: #fff;
+    }
+
+    #tap {
+      margin-top: 40px;
+      padding: 40px;
+      background: white;
+      color: black;
+      font-size: 40px;
+    }
+
+    #winnerMessage {
+      min-height: 1.2em;
+      margin-top: 30px;
+      font-size: 34px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>TRIBÙ SINCRONA</h1>
+
+<button class="team-button hydra" onclick="setTeam('A')">HYDRA</button>
+<button class="team-button echo" onclick="setTeam('B')">ECHO</button>
+
+<h2 id="teamLabel"></h2>
+
+<button id="tap">
+  SINCRONO
+</button>
+
+<h2 id="winnerMessage"></h2>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBJg35m3F7getZNo27oadC8oMgl5SlgtdE",
+  authDomain: "ritual-demo-53ae7.firebaseapp.com",
+  databaseURL: "https://ritual-demo-53ae7-default-rtdb.europe-west1.firebasedatabase.app/",
+  projectId: "ritual-demo-53ae7",
+  storageBucket: "ritual-demo-53ae7.appspot.com",
+  messagingSenderId: "213201258232",
+  appId: "1:213201258232:web:fe1b12eeb440611902dd0d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let team = null;
+
+let round = 1;
+let maxScore = 10;
+
+function setTeam(t){
+  team = t;
+  const label = document.getElementById("teamLabel");
+  label.innerText = t === 'A' ? 'hydra' : 'echo';
+  label.style.color = t === 'A' ? '#00FFE5' : '#B156FF';
+}
+
+function showWinnerMessage(winnerTeam){
+  const winnerMessage = document.getElementById("winnerMessage");
+  const teamName = winnerTeam === 'A' ? 'HYDRA' : 'ECHO';
+  const teamColor = winnerTeam === 'A' ? '#00FFE5' : '#B156FF';
+
+  winnerMessage.innerText = teamName + " ha vinto";
+  winnerMessage.style.color = teamColor;
+  winnerMessage.style.textShadow = "0 0 40px " + teamColor;
+}
+
+document.getElementById("tap").addEventListener("click", () => {
+  if(!team){
+    const winnerMessage = document.getElementById("winnerMessage");
+    winnerMessage.innerText = "Scegli un team";
+    winnerMessage.style.color = "white";
+    winnerMessage.style.textShadow = "none";
+    return;
+  }
+
+  let refA = db.ref("teamA");
+  let refB = db.ref("teamB");
+
+  db.ref("team" + team).transaction(value => {
+    let newValue = (value || 0) + 1;
+
+    if(newValue >= maxScore){
+      newValue = maxScore;
+
+      // Fine round
+      showWinnerMessage(team);
+
+      round++;
+
+      // Reset punteggi dopo breve delay
+      setTimeout(() => {
+        refA.set(0);
+        refB.set(0);
+        document.getElementById("winnerMessage").innerText = "";
+      }, 1000);
+    }
+
+    return newValue;
+  });
+});
+</script>
+
+</body>
+</html>

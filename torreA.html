@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Torre A</title>
+  <link href="https://fonts.googleapis.com/css2?family=PP+Rader:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div id="team-header">
+  <h1 style="font-family: 'PP Rader', sans-serif; font-weight: 1000; font-size: 5em; color: rgb(0, 0, 0); text-align: center; text-shadow: 0 0 20px rgba(0,255,229,0.7);">HYDRA</h1>
+  <div id="bar-base" aria-hidden="true"></div>
+</div>
+
+<div id="plus">+</div>
+<div id="bar-container">
+  <div id="bar-stage">
+    <div id="winner-message">Avete vinto</div>
+    <div id="bar"></div>
+  </div>
+</div>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+body {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-image: url('torre.jpg');
+  background-size: cover;
+  background-position: center;
+}
+#team-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#team-header h1 {
+  margin-bottom: 0;
+}
+#bar-base {
+  width: 260px;
+  height: 120px;
+  margin-top: -8px;
+  background-image: url('bar-base1.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: contain;
+  pointer-events: none;
+}
+#bar-container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40px;
+}
+#bar-stage {
+  position: relative;
+  width: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+#plus {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 7em;
+  color: rgb(0, 0, 0);
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 0 25px rgba(0,255,229,0.85);
+}
+#plus.show {
+  opacity: 1;
+  animation: plus-pop 1s ease-out;
+}
+#winner-message {
+  position: absolute;
+  bottom: 200px;
+  left: 50%;
+  z-index: 3;
+  transform: translateX(-50%) scale(0.92);
+  padding: 0 24px;
+  font-family: 'PP Rader', sans-serif;
+  font-size: 4em;
+  font-weight: 1000;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 0 50px rgba(0,255,229,1), 0 0 18px rgba(255,255,255,0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#winner-message.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+@keyframes plus-pop {
+  0% { transform: translate(-50%, 12px) scale(0.7); opacity: 0; }
+  35% { transform: translate(-50%, -12px) scale(1.25); opacity: 1; }
+  100% { transform: translate(-50%, -44px) scale(1); opacity: 0; }
+}
+
+#bar{
+  position: relative;
+  z-index: 1;
+  width:200px;
+  height:0px;
+  background:rgba(0,255,229,0.7);
+  box-shadow: 0 0 50px rgba(0,255,229,0.7);
+  transition: height 0.1s;
+}
+</style>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBJg35m3F7getZNo27oadC8oMgl5SlgtdE",
+  authDomain: "ritual-demo-53ae7.firebaseapp.com",
+  databaseURL: "https://ritual-demo-53ae7-default-rtdb.europe-west1.firebasedatabase.app/",
+  projectId: "ritual-demo-53ae7",
+  storageBucket: "ritual-demo-53ae7.appspot.com",
+  messagingSenderId: "213201258232",
+  appId: "1:213201258232:web:fe1b12eeb440611902dd0d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let lastA = null;
+const barStep = 45;
+const maxScore = 10;
+const bar = document.getElementById("bar");
+const plus = document.getElementById("plus");
+const winnerMessage = document.getElementById("winner-message");
+
+function resetBar(){
+  bar.style.height = "0px";
+  plus.classList.remove("show");
+  winnerMessage.classList.remove("show");
+}
+
+db.ref("teamA").on("value", snapshot => {
+  const value = snapshot.val() || 0;
+
+  if (value <= 0) {
+    resetBar();
+    lastA = 0;
+    return;
+  }
+
+  bar.style.height = Math.min(value, maxScore) * barStep + "px";
+  winnerMessage.classList.toggle("show", value >= maxScore);
+
+  if (lastA !== null && value > lastA) {
+    plus.classList.add("show");
+    setTimeout(() => plus.classList.remove("show"), 700);
+  }
+  lastA = value;
+});
+</script>
+
+</body>
+</html>

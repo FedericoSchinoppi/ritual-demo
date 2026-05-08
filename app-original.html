@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Accelerometer Demo</title>
+    <script>
+      function getAccel(){ 
+        DeviceMotionEvent.requestPermission().then(response => {
+        if (response == 'granted') { 
+          document.getElementById('permission').value = "accelerometer permission granted";
+
+          // Add a listener to get smartphone acceleration
+          // in the XYZ axes (units in m/s^2) 
+          window.addEventListener('devicemotion', (event) => {
+            document.getElementById('x').value = event.accelerationIncludingGravity.x;
+            document.getElementById('y').value = event.accelerationIncludingGravity.y;
+            document.getElementById('z').value = event.accelerationIncludingGravity.z;
+          });
+          
+          // Add a listener to get smartphone orientation
+          // in the alpha-beta-gamma axes (units in degrees)
+          window.addEventListener('deviceorientation',(event) => {
+            document.getElementById('alpha').value = event.alpha;
+            document.getElementById('beta').value = event.beta;
+            document.getElementById('gamma').value = event.gamma;
+          });
+          }
+        }); 
+      }
+    </script>
+    </head>
+    <body>
+        <button id="accelPermsButton" onclick="getAccel()"><h1>Get Accelerometer Permissions</h1></button><br><br>
+        
+        <label for="field4">Permission: </label>
+        <input type="text" id="permission" name="permission"><br><br>
+        
+        <label for="field1">alpha:</label>
+        <input type="text" id="alpha" name="beta"><br><br>
+
+        <label for="field2">beta:</label>
+        <input type="text" id="beta" name="beta"><br><br>
+
+        <label for="field3">gamma:</label>
+        <input type="text" id="gamma" name="gamma"><br><br>
+
+        <label for="field1">accelleration x:</label>
+        <input type="text" id="x" name="x"><br><br>
+
+        <label for="field2">accelleration y:</label>
+        <input type="text" id="y" name="y"><br><br>
+
+        <label for="field3">accelleration z:</label>
+        <input type="text" id="z" name="z"><br><br>
+    </body>
+</html>

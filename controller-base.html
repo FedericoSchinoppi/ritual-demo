@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="background:black; color:white; text-align:center;">
+
+<h1>TRIBÙ SINCRONA</h1>
+
+<button onclick="setTeam('A')" style="font-size:30px; padding:20px 30px; margin:10px; background:#00FFE5; color:#000; border:none; border-radius:10px;">HYDRA</button>
+<button onclick="setTeam('B')" style="font-size:30px; padding:20px 30px; margin:10px; background:#B156FF; color:#fff; border:none; border-radius:10px;">ECHO</button>
+
+<h2 id="teamLabel"></h2>
+
+<button id="tap" style="font-size:40px; padding:40px; margin-top:40px; border-radius:10px;">
+  SINCRONO
+</button>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBJg35m3F7getZNo27oadC8oMgl5SlgtdE",
+  authDomain: "ritual-demo-53ae7.firebaseapp.com",
+  databaseURL: "https://ritual-demo-53ae7-default-rtdb.europe-west1.firebasedatabase.app/",
+  projectId: "ritual-demo-53ae7",
+  storageBucket: "ritual-demo-53ae7.appspot.com",
+  messagingSenderId: "213201258232",
+  appId: "1:213201258232:web:fe1b12eeb440611902dd0d"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let team = null;
+
+function setTeam(t){
+  team = t;
+  const label = document.getElementById("teamLabel");
+  label.innerText = t === 'A' ? 'hydra' : 'echo';
+  label.style.color = t === 'A' ? '#00FFE5' : '#B156FF';
+}
+
+document.getElementById("tap").addEventListener("click", () => {
+  if(!team){
+    alert("Scegli un team");
+    return;
+  }
+
+  let ref = db.ref("team" + team);
+
+  ref.transaction(value => (value || 0) + 1);
+});
+</script>
+
+</body>
+</html>

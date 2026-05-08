@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <title>Motion Controller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link href="https://fonts.googleapis.com/css2?family=PP+Rader:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'PP Rader', Arial, Helvetica, sans-serif;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: black;
+        color: white;
+        text-align: center;
+      }
+
+      .phone-app {
+        width: 100%;
+        max-width: 430px;
+        min-height: 100dvh;
+        margin: 0 auto;
+        padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 12px 0 28px;
+        font-size: 34px;
+        line-height: 1.1;
+      }
+
+      h2 {
+        min-height: 34px;
+        margin: 14px 0 18px;
+        font-size: 30px;
+        line-height: 1.1;
+      }
+
+      .round-panel {
+        width: 100%;
+        min-height: 158px;
+        margin: 0 0 18px;
+        padding: 22px 18px;
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 30px;
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .round-title {
+        color: #00FFE5;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .round-countdown {
+        min-height: 68px;
+        margin-top: 10px;
+        color: white;
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .round-phase {
+        min-height: 22px;
+        margin-top: 10px;
+        color: rgba(255,255,255,0.72);
+        font-size: 18px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .team-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+      }
+
+      button {
+        min-height: 64px;
+        border: none;
+        border-radius: 34px;
+        font-weight: 700;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .team-button {
+        padding: 18px 16px;
+        font-size: 28px;
+      }
+
+      .hydra {
+        background: #00FFE5;
+        color: #000;
+      }
+
+      .echo {
+        background: #B156FF;
+        color: #fff;
+      }
+
+      .motion-button {
+        width: 100%;
+        padding: 22px 18px;
+        background: #fff;
+        color: #000;
+        font-size: 26px;
+      }
+
+      .start-button {
+        width: 100%;
+        margin-top: 16px;
+        padding: 34px 18px;
+        background: #00FFE5;
+        color: #000;
+        font-size: 38px;
+      }
+
+      .status {
+        width: 100%;
+        margin-top: 22px;
+        text-align: left;
+      }
+
+      .status label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .status input {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 24px;
+        background: #111;
+        color: white;
+        font-family: inherit;
+        font-size: 18px;
+        text-align: center;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.86);
+        padding: 24px;
+      }
+
+      .popup-panel {
+        max-width: 420px;
+        width: 100%;
+        padding: 28px 22px;
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 30px;
+        background: #111;
+        box-shadow: 0 0 40px rgba(0,255,229,0.25);
+      }
+
+      .popup-panel h2 {
+        min-height: 0;
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+
+      .popup-panel p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+
+      .popup-panel button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 16px 18px;
+        background: #00FFE5;
+        color: #000;
+        font-size: 22px;
+      }
+
+      @media (max-height: 720px) {
+        .phone-app {
+          padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+        }
+
+        h1 {
+          margin: 6px 0 18px;
+          font-size: 30px;
+        }
+
+        h2 {
+          min-height: 28px;
+          margin: 10px 0 12px;
+          font-size: 26px;
+        }
+
+        .round-panel {
+          min-height: 132px;
+          margin-bottom: 12px;
+          padding: 16px;
+        }
+
+        .round-title {
+          font-size: 30px;
+        }
+
+        .round-countdown {
+          min-height: 54px;
+          font-size: 48px;
+        }
+
+        .motion-button {
+          padding: 18px 16px;
+          font-size: 23px;
+        }
+
+        .start-button {
+          margin-top: 12px;
+          padding: 26px 16px;
+          font-size: 34px;
+        }
+
+        .status {
+          margin-top: 14px;
+        }
+      }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+      const firebaseConfig = {
+      apiKey: "AIzaSyBJg35m3F7getZNo27oadC8oMgl5SlgtdE",
+      authDomain: "ritual-demo-53ae7.firebaseapp.com",
+      databaseURL: "https://ritual-demo-53ae7-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "ritual-demo-53ae7",
+      storageBucket: "ritual-demo-53ae7.appspot.com",
+      messagingSenderId: "213201258232",
+      appId: "1:213201258232:web:fe1b12eeb440611902dd0d"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
+
+      let team = null;
+      let recording = false;
+      let energy = 0;
+      let energyByAxis = { x: 0, y: 0, z: 0 };
+      let motionSamples = [];
+      let motionEnabled = false;
+      let sessionRunning = false;
+      const roundNames = ["Primo Round", "Secondo Round", "Terzo Round"];
+      const recordingSeconds = 5;
+      const pauseSeconds = 10;
+      const resetDelaySeconds = 5;
+      const energyRangeSize = 500;
+      const matchWaitMs = 7000;
+      const matchWindowMs = 12000;
+      const deviceId = localStorage.getItem("motionDeviceId") || createDeviceId();
+
+      function createDeviceId(){
+        const id = "device_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+        localStorage.setItem("motionDeviceId", id);
+        return id;
+      }
+
+      function setTeam(t){
+        if(sessionRunning) return;
+
+        team = t;
+        const label = document.getElementById("teamLabel");
+        label.innerText = t === 'A' ? 'hydra' : 'echo';
+        label.style.color = t === 'A' ? '#00FFE5' : '#B156FF';
+        setRoundDisplay("Primo Round", recordingSeconds, "pronto", label.style.color);
+      }
+
+      function setPermissionStatus(message){
+        document.getElementById('permission').value = message;
+      }
+
+      function setRoundDisplay(title, count, phase, color){
+        const roundTitle = document.getElementById("roundTitle");
+        const roundCountdown = document.getElementById("roundCountdown");
+        const roundPhase = document.getElementById("roundPhase");
+
+        roundTitle.innerText = title;
+        roundTitle.style.color = color || "#00FFE5";
+        roundCountdown.innerText = count;
+        roundPhase.innerText = phase;
+      }
+
+      function setControlsDisabled(disabled){
+        document.getElementById("startButton").disabled = disabled;
+        document.querySelectorAll(".team-button").forEach(button => {
+          button.disabled = disabled;
+        });
+      }
+
+      function wait(ms){
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function withTimeout(promise, ms){
+        return Promise.race([
+          promise,
+          wait(ms).then(() => "timeout")
+        ]);
+      }
+
+      async function runCountdown(seconds, update){
+        for(let remaining = seconds; remaining > 0; remaining--){
+          update(remaining);
+          await wait(1000);
+        }
+      }
+
+      function getEnergyRange(axes){
+        const total = axes.x + axes.y + axes.z;
+        return Math.floor(total / energyRangeSize);
+      }
+
+      function hasMatchingRange(submissions, currentDeviceId){
+        const currentSubmission = submissions[currentDeviceId];
+        if(!currentSubmission) return false;
+
+        return Object.keys(submissions).some(id => {
+          const submission = submissions[id];
+          return id !== currentDeviceId
+            && submission.range === currentSubmission.range
+            && Math.abs(submission.createdAt - currentSubmission.createdAt) <= matchWindowMs;
+        });
+      }
+
+      async function waitForMatchingRange(submissionsRef, currentDeviceId){
+        const startedAt = Date.now();
+
+        while(Date.now() - startedAt < matchWaitMs){
+          const snapshot = await submissionsRef.once("value");
+          const submissions = snapshot.val() || {};
+
+          if(submissions[currentDeviceId] && hasMatchingRange(submissions, currentDeviceId)){
+            return true;
+          }
+
+          await wait(250);
+        }
+
+        return false;
+      }
+
+      async function incrementTeamOnceForRound(teamKey, roundKey){
+        const matchRef = db.ref("matchedRounds/" + teamKey + "/" + roundKey);
+        let shouldIncrement = false;
+        const now = Date.now();
+
+        const result = await matchRef.transaction(value => {
+          if(value && now - value.matchedAt <= matchWindowMs){
+            return;
+          }
+
+          shouldIncrement = true;
+          return {
+            matchedAt: now
+          };
+        });
+
+        if(shouldIncrement && result.committed){
+          await db.ref(teamKey).transaction(value => Math.min((value || 0) + 1, 10));
+          return true;
+        }
+
+        return false;
+      }
+
+      async function sendRoundEnergy(selectedTeam, roundIndex){
+        const teamKey = "team" + selectedTeam;
+        const roundKey = "round" + (roundIndex + 1);
+        const separatedEnergy = {
+          x: Math.round(energyByAxis.x),
+          y: Math.round(energyByAxis.y),
+          z: Math.round(energyByAxis.z)
+        };
+        const range = getEnergyRange(separatedEnergy);
+        const roundData = {
+          deviceId,
+          team: selectedTeam,
+          round: roundIndex + 1,
+          roundName: roundNames[roundIndex],
+          createdAt: Date.now(),
+          range,
+          summary: {
+            axes: separatedEnergy,
+            samplesCount: motionSamples.length
+          },
+          samples: motionSamples
+        };
+        const updates = {};
+
+        updates[teamKey + "_x"] = separatedEnergy.x;
+        updates[teamKey + "_y"] = separatedEnergy.y;
+        updates[teamKey + "_z"] = separatedEnergy.z;
+        updates[teamKey + "_samplesCount"] = motionSamples.length;
+        updates[teamKey + "_lastRound"] = roundData;
+        updates["motionSubmissions/" + teamKey + "/" + roundKey + "/" + deviceId] = roundData;
+
+        await db.ref().update(updates);
+        const submissionsRef = db.ref("motionSubmissions/" + teamKey + "/" + roundKey);
+        const matched = await waitForMatchingRange(submissionsRef, deviceId);
+        const incremented = matched ? await incrementTeamOnceForRound(teamKey, roundKey) : false;
+
+        return {
+          axes: separatedEnergy,
+          matched,
+          incremented,
+          range
+        };
+      }
+
+      async function resetTowerBars(showStatus = true){
+        try {
+          const result = await withTimeout(db.ref().update({
+            teamA: 0,
+            teamB: 0,
+            teamA_x: 0,
+            teamA_y: 0,
+            teamA_z: 0,
+            teamA_samplesCount: 0,
+            teamB_x: 0,
+            teamB_y: 0,
+            teamB_z: 0,
+            teamB_samplesCount: 0
+          }), 1500);
+
+          if(showStatus){
+            setPermissionStatus(result === "timeout" ? "azzeramento inviato" : "barre azzerate");
+          }
+        } catch (error) {
+          if(showStatus){
+            setPermissionStatus("errore azzeramento barre");
+          }
+        }
+      }
+
+      async function runRound(roundIndex){
+        const roundTitle = roundNames[roundIndex];
+        const teamColor = team === 'A' ? '#00FFE5' : '#B156FF';
+
+        await resetTowerBars(false);
+        setRoundDisplay(roundTitle, recordingSeconds, "registrazione", teamColor);
+        energy = 0;
+        energyByAxis = { x: 0, y: 0, z: 0 };
+        motionSamples = [];
+        recording = true;
+
+        await runCountdown(recordingSeconds, remaining => {
+          setRoundDisplay(roundTitle, remaining, "registrazione", teamColor);
+        });
+
+        recording = false;
+        const roundEnergy = energy;
+        setRoundDisplay(roundTitle, "0", "invio energia", teamColor);
+        setPermissionStatus("energia misurata: " + Math.round(roundEnergy));
+
+        try {
+          const result = await withTimeout(sendRoundEnergy(team, roundIndex), 9000);
+          setPermissionStatus(
+            result === "timeout"
+              ? "attesa match in corso"
+              : result.matched
+                ? "match range: barra +" + (result.incremented ? "1" : "0")
+                : "nessun match nel range"
+          );
+        } catch (error) {
+          setPermissionStatus("errore invio energia: " + (error.code || error.message || "sconosciuto"));
+        }
+      }
+
+      async function runPause(nextRoundIndex){
+        let resetDone = false;
+
+        for(let remaining = pauseSeconds; remaining > 0; remaining--){
+          setRoundDisplay("Pausa", remaining, "prossimo: " + roundNames[nextRoundIndex], "#fff");
+
+          if(!resetDone && remaining === pauseSeconds - resetDelaySeconds){
+            await resetTowerBars();
+            resetDone = true;
+          }
+
+          await wait(1000);
+        }
+      }
+
+      async function runFinalResetDelay(){
+        await runCountdown(resetDelaySeconds, remaining => {
+          setRoundDisplay("Round completati", remaining, "azzeramento finale", "#fff");
+        });
+
+        await resetTowerBars();
+      }
+
+      function listenToMotion(){
+        if (motionEnabled) return;
+
+        motionEnabled = true;
+        setPermissionStatus("movimento attivo");
+
+        window.addEventListener('devicemotion', (event) => {
+          if(!recording) return;
+
+          let acc = event.accelerationIncludingGravity;
+          if(!acc) return;
+
+          const x = acc.x || 0;
+          const y = acc.y || 0;
+          const z = acc.z || 0;
+          const axisEnergy = {
+            x: Math.abs(x),
+            y: Math.abs(y),
+            z: Math.abs(z)
+          };
+          let value = axisEnergy.x + axisEnergy.y + axisEnergy.z;
+
+          energy += value;
+          energyByAxis.x += axisEnergy.x;
+          energyByAxis.y += axisEnergy.y;
+          energyByAxis.z += axisEnergy.z;
+
+          motionSamples.push({
+            x,
+            y,
+            z,
+            energyX: axisEnergy.x,
+            energyY: axisEnergy.y,
+            energyZ: axisEnergy.z,
+            t: Date.now()
+          });
+        });
+      }
+
+      function hideMotionPopup(){
+        document.getElementById('motionPopup').style.display = "none";
+      }
+
+      function getAccel(){ 
+        if (!window.DeviceMotionEvent) {
+          setPermissionStatus("movimento non supportato");
+          return;
+        }
+
+        if (typeof DeviceMotionEvent.requestPermission === "function") {
+          DeviceMotionEvent.requestPermission().then(response => {
+            if (response === 'granted') { 
+              hideMotionPopup();
+              listenToMotion();
+            } else {
+              setPermissionStatus("permesso negato");
+            }
+          }).catch(() => {
+            setPermissionStatus("permesso non disponibile");
+          });
+
+          return;
+        }
+
+        hideMotionPopup();
+        listenToMotion();
+      }
+
+      function showMotionPopupIfNeeded(){
+        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+          document.getElementById('motionPopup').style.display = "flex";
+        }
+      }
+
+      window.addEventListener('load', showMotionPopupIfNeeded);
+
+      async function start(){
+        if(!team){
+          alert("Scegli team");
+          return;
+        }
+
+        if(sessionRunning) return;
+
+        if(!motionEnabled){
+          getAccel();
+          if(!motionEnabled){
+            return;
+          }
+        }
+
+        sessionRunning = true;
+        setControlsDisabled(true);
+        document.getElementById("startButton").innerText = "IN CORSO";
+
+        for(let roundIndex = 0; roundIndex < roundNames.length; roundIndex++){
+          await runRound(roundIndex);
+
+          if(roundIndex < roundNames.length - 1){
+            await runPause(roundIndex + 1);
+          } else {
+            await runFinalResetDelay();
+          }
+        }
+
+        sessionRunning = false;
+        setControlsDisabled(false);
+        document.getElementById("startButton").innerText = "START 5s";
+        setRoundDisplay("Round completati", "Fine", "sessione conclusa", "#00FFE5");
+      }
+    </script>
+  </head>
+  <body>
+
+    <div id="motionPopup" class="popup">
+      <div class="popup-panel">
+        <h2>Autorizza movimento</h2>
+        <p>Per registrare il movimento su iPhone devi dare il permesso ai sensori.</p>
+        <button onclick="getAccel()">
+          AUTORIZZA MOVIMENTO
+        </button>
+      </div>
+    </div>
+
+    <main class="phone-app">
+      <h1>TRIBÙ SINCRONA</h1>
+
+      <div class="team-row">
+        <button class="team-button hydra" onclick="setTeam('A')">HYDRA</button>
+        <button class="team-button echo" onclick="setTeam('B')">ECHO</button>
+      </div>
+
+      <h2 id="teamLabel"></h2>
+
+      <div class="round-panel">
+        <div id="roundTitle" class="round-title">Primo Round</div>
+        <div id="roundCountdown" class="round-countdown">5</div>
+        <div id="roundPhase" class="round-phase">pronto</div>
+      </div>
+
+      <button class="motion-button" onclick="getAccel()">ATTIVA MOVIMENTO</button>
+
+      <button id="startButton" class="start-button" onclick="start()">
+        START 5s
+      </button>
+
+      <div class="status">
+        <label for="permission">Permission:</label>
+        <input type="text" id="permission" readonly>
+      </div>
+    </main>
+
+  </body>
+</html>

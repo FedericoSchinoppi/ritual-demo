@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <title>App Motion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link href="https://fonts.googleapis.com/css2?family=PP+Rader:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'PP Rader', Arial, Helvetica, sans-serif;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: black;
+        color: white;
+        text-align: center;
+      }
+
+      .phone-app {
+        width: 100%;
+        max-width: 430px;
+        min-height: 100dvh;
+        margin: 0 auto;
+        padding: max(24px, env(safe-area-inset-top)) 18px max(24px, env(safe-area-inset-bottom));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 12px 0 28px;
+        font-size: 34px;
+        line-height: 1.1;
+      }
+
+      h2 {
+        min-height: 34px;
+        margin: 14px 0 18px;
+        font-size: 30px;
+        line-height: 1.1;
+      }
+
+      .round-panel {
+        width: 100%;
+        min-height: 158px;
+        margin: 0 0 18px;
+        padding: 22px 18px;
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 30px;
+        background: #111;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .round-title {
+        color: #00FFE5;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+
+      .round-countdown {
+        min-height: 68px;
+        margin-top: 10px;
+        color: white;
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .round-phase {
+        min-height: 22px;
+        margin-top: 10px;
+        color: rgba(255,255,255,0.72);
+        font-size: 18px;
+        line-height: 1.2;
+        text-transform: uppercase;
+      }
+
+      .team-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+      }
+
+      button {
+        min-height: 64px;
+        border: none;
+        border-radius: 34px;
+        font-weight: 700;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+
+      button:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+      }
+
+      .team-button {
+        padding: 18px 16px;
+        font-size: 28px;
+      }
+
+      .hydra {
+        background: #00FFE5;
+        color: #000;
+      }
+
+      .echo {
+        background: #B156FF;
+        color: #fff;
+      }
+
+      .motion-button {
+        width: 100%;
+        padding: 22px 18px;
+        background: #fff;
+        color: #000;
+        font-size: 26px;
+      }
+
+      .start-button {
+        width: 100%;
+        margin-top: 16px;
+        padding: 34px 18px;
+        background: #00FFE5;
+        color: #000;
+        font-size: 38px;
+      }
+
+      .status {
+        width: 100%;
+        margin-top: 22px;
+        text-align: left;
+      }
+
+      .status label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+
+      .status input {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,0.35);
+        border-radius: 24px;
+        background: #111;
+        color: white;
+        font-family: inherit;
+        font-size: 18px;
+        text-align: center;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.86);
+        padding: 24px;
+      }
+
+      .popup-panel {
+        max-width: 420px;
+        width: 100%;
+        padding: 28px 22px;
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 30px;
+        background: #111;
+        box-shadow: 0 0 40px rgba(0,255,229,0.25);
+      }
+
+      .popup-panel h2 {
+        min-height: 0;
+        margin: 0 0 12px;
+        font-size: 28px;
+      }
+
+      .popup-panel p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+
+      .popup-panel button {
+        width: 100%;
+        margin-top: 18px;
+        padding: 16px 18px;
+        background: #00FFE5;
+        color: #000;
+        font-size: 22px;
+      }
+
+      @media (max-height: 720px) {
+        .phone-app {
+          padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+        }
+
+        h1 {
+          margin: 6px 0 18px;
+          font-size: 30px;
+        }
+
+        h2 {
+          min-height: 28px;
+          margin: 10px 0 12px;
+          font-size: 26px;
+        }
+
+        .round-panel {
+          min-height: 132px;
+          margin-bottom: 12px;
+          padding: 16px;
+        }
+
+        .round-title {
+          font-size: 30px;
+        }
+
+        .round-countdown {
+          min-height: 54px;
+          font-size: 48px;
+        }
+
+        .motion-button {
+          padding: 18px 16px;
+          font-size: 23px;
+        }
+
+        .start-button {
+          margin-top: 12px;
+          padding: 26px 16px;
+          font-size: 34px;
+        }
+
+        .status {
+          margin-top: 14px;
+        }
+      }
+    </style>
+
+    <script>
+      let team = null;
+      let recording = false;
+      let energy = 0;
+      let motionEnabled = false;
+      let sessionRunning = false;
+      const roundNames = ["Primo Round", "Secondo Round", "Terzo Round"];
+      const recordingSeconds = 5;
+      const pauseSeconds = 10;
+      const resetDelaySeconds = 5;
+
+      let data = [];
+
+      const socket = new WebSocket("ws://192.168.1.16:8080"); // SOSTITUISCI con il tuo IP
+
+      socket.onopen = () => {
+        setPermissionStatus("connesso al server");
+      };
+
+      socket.onmessage = (event) => {
+        let msg = JSON.parse(event.data);
+
+        if(msg.type === "start"){
+          runServerStart();
+        }
+
+        if(msg.type === "stop"){
+          runServerStop();
+        }
+
+        if(msg.type === "result"){
+          setPermissionStatus("RISULTATO A: " + msg.scoreA + " | B: " + msg.scoreB);
+        }
+      };
+
+      socket.onerror = () => {
+        setPermissionStatus("errore connessione server");
+      };
+
+      function setTeam(t){
+        if(sessionRunning) return;
+
+        team = t;
+        const label = document.getElementById("teamLabel");
+        label.innerText = t === 'A' ? 'hydra' : 'echo';
+        label.style.color = t === 'A' ? '#00FFE5' : '#B156FF';
+        setRoundDisplay("Primo Round", recordingSeconds, "pronto", label.style.color);
+      }
+
+      function setPermissionStatus(message){
+        document.getElementById('permission').value = message;
+      }
+
+      function setRoundDisplay(title, count, phase, color){
+        const roundTitle = document.getElementById("roundTitle");
+        const roundCountdown = document.getElementById("roundCountdown");
+        const roundPhase = document.getElementById("roundPhase");
+
+        roundTitle.innerText = title;
+        roundTitle.style.color = color || "#00FFE5";
+        roundCountdown.innerText = count;
+        roundPhase.innerText = phase;
+      }
+
+      function setControlsDisabled(disabled){
+        document.getElementById("startButton").disabled = disabled;
+        document.querySelectorAll(".team-button").forEach(button => {
+          button.disabled = disabled;
+        });
+      }
+
+      function wait(ms){
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      function withTimeout(promise, ms){
+        return Promise.race([
+          promise,
+          wait(ms).then(() => "timeout")
+        ]);
+      }
+
+      async function runCountdown(seconds, update){
+        for(let remaining = seconds; remaining > 0; remaining--){
+          update(remaining);
+          await wait(1000);
+        }
+      }
+
+      function listenToMotion(){
+        if (motionEnabled) return;
+
+        motionEnabled = true;
+        setPermissionStatus("movimento attivo");
+
+        window.addEventListener('devicemotion', (event) => {
+          if(!recording) return;
+
+          let acc = event.accelerationIncludingGravity;
+          if(!acc) return;
+
+          let value = Math.abs(acc.x || 0) + Math.abs(acc.y || 0) + Math.abs(acc.z || 0);
+
+          energy += value;
+
+          data.push({
+            x: acc.x || 0,
+            y: acc.y || 0,
+            z: acc.z || 0,
+            t: Date.now()
+          });
+        });
+      }
+
+      function hideMotionPopup(){
+        document.getElementById('motionPopup').style.display = "none";
+      }
+
+      function getAccel(){ 
+        if (!window.DeviceMotionEvent) {
+          setPermissionStatus("movimento non supportato");
+          return;
+        }
+
+        if (typeof DeviceMotionEvent.requestPermission === "function") {
+          DeviceMotionEvent.requestPermission().then(response => {
+            if (response === 'granted') { 
+              hideMotionPopup();
+              listenToMotion();
+            } else {
+              setPermissionStatus("permesso negato");
+            }
+          }).catch(() => {
+            setPermissionStatus("permesso non disponibile");
+          });
+
+          return;
+        }
+
+        hideMotionPopup();
+        listenToMotion();
+      }
+
+      function showMotionPopupIfNeeded(){
+        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+          document.getElementById('motionPopup').style.display = "flex";
+        }
+      }
+
+      window.addEventListener('load', showMotionPopupIfNeeded);
+
+      function runServerStart(){
+        energy = 0;
+        recording = true;
+        setPermissionStatus("registrazione avviata");
+      }
+
+      function runServerStop(){
+        recording = false;
+        setPermissionStatus("invio dati...");
+
+        socket.send(JSON.stringify({
+          type: "data",
+          team: team,
+          payload: data
+        }));
+      }
+
+      function start(){
+        if(!team){
+          alert("Scegli team");
+          return;
+        }
+
+        if(!motionEnabled){
+          getAccel();
+          return;
+        }
+
+        setPermissionStatus("in attesa del server...");
+      }
+    </script>
+  </head>
+  <body>
+
+    <div id="motionPopup" class="popup">
+      <div class="popup-panel">
+        <h2>Autorizza movimento</h2>
+        <p>Per registrare il movimento su iPhone devi dare il permesso ai sensori.</p>
+        <button onclick="getAccel()">
+          AUTORIZZA MOVIMENTO
+        </button>
+      </div>
+    </div>
+
+    <main class="phone-app">
+      <h1>TRIBÙ SINCRONA</h1>
+
+      <div class="team-row">
+        <button class="team-button hydra" onclick="setTeam('A')">HYDRA</button>
+        <button class="team-button echo" onclick="setTeam('B')">ECHO</button>
+      </div>
+
+      <h2 id="teamLabel"></h2>
+
+      <div class="round-panel">
+        <div id="roundTitle" class="round-title">Primo Round</div>
+        <div id="roundCountdown" class="round-countdown">5</div>
+        <div id="roundPhase" class="round-phase">pronto</div>
+      </div>
+
+      <button class="motion-button" onclick="getAccel()">ATTIVA MOVIMENTO</button>
+
+      <button id="startButton" class="start-button" onclick="start()">
+        WAIT SERVER
+      </button>
+
+      <div class="status">
+        <label for="permission">Permission:</label>
+        <input type="text" id="permission" readonly>
+      </div>
+    </main>
+
+  </body>
+</html>
